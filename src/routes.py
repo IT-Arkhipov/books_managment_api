@@ -1,51 +1,49 @@
-from fastapi import FastAPI, HTTPException, APIRouter
-from pydantic import BaseModel
-from typing import List
+from fastapi import HTTPException, APIRouter, Depends
+
+import src.books_db
+from src import utils, schemas
 
 router = APIRouter(prefix="/books")
 
-books_db = []
+
+@router.get("", response_model=schemas.Books, summary="Get books")
+def get_books(books: list = Depends(utils.get_books)):
+    """
+    Get all books.\n
+    Parameters:\n
+    - offset: books offset\n
+    - description: number of books per page
+    """
+    return books
 
 
-class Book(BaseModel):
-    id: int
-    title: str
-    author: str
-    year: int
-
-
-@router.get("", response_model=List[Book])
-def get_books():
-    return books_db
-
-
-@router.post("", response_model=Book)
-def create_book(book: Book):
-    books_db.append(book)
+@router.post("", response_model=schemas.Book)
+def create_book(book: schemas.Book):
+    src.books_db.books.append(book)
     return book
 
 
-@router.get("/{book_id}", response_model=Book)
+@router.get("/{book_id}", response_model=schemas.Book)
 def get_book(book_id: int):
-    for book in books_db:
+    for book in src.books_db.books:
         if book.id == book_id:
             return book
-    raise HTTPException(status_code=404, detail="Book not found")
+    raise HTTPException(status_code=404, detail="schemas.Book not found")
 
 
-@router.put("/{book_id}", response_model=Book)
-def update_book(book_id: int, updated_book: Book):
-    for i, book in enumerate(books_db):
+@router.put("/{book_id}", response_model=schemas.Book)
+def update_book(book_id: int, updated_book: schemas.Book):
+    for i, book in enumerate(src.books_db.books):
         if book.id == book_id:
-            books_db[i] = updated_book
+            src.books_db.books[i] = updated_book
             return updated_book
-    raise HTTPException(status_code=404, detail="Book not found")
+    raise HTTPException(status_code=404, detail="schemas.Book not found")
 
 
 @router.delete("/{book_id}")
 def delete_book(book_id: int):
-    for i, book in enumerate(books_db):
+    for i, book in enumerate(src.books_db.books):
         if book.id == book_id:
-            del books_db[i]
-            return {"message": "Book deleted"}
-    raise HTTPException(status_code=404, detail="Book not found")
+            del src.books_db.books[i]
+            return {"message": "schemas.Book deleted"}
+    raise HTTPException(status_code=404, detail="schemas.Book not found")
