@@ -1,3 +1,5 @@
+from typing import List
+
 from pydantic import BaseModel
 
 
@@ -9,4 +11,4 @@ class Book(BaseModel):
 
 
 class Books(BaseModel):
-    books: list[Book]
+    books: List[Book]
