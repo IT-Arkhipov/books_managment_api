@@ -10,9 +10,10 @@ router = APIRouter(prefix="/books")
 def get_books(books: list = Depends(utils.get_books)):
     """
     Get all books.\n
-    Parameters:\n
-    - offset: books offset\n
-    - description: number of books per page
+    Hidden parameters:\n
+    - offset [int] - books list offset\n
+    - description [int] - number of books per query
+    - search [str] - filter books list by searched entry in title, author or publisher
     """
     return books
 
