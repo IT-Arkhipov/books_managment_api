@@ -44,3 +44,11 @@ def create_book(new_book: schemas.Book):
         year=new_book.year).model_dump()
     books.append(appended_book)
     return appended_book
+
+
+def delete_book(book_id: str):
+    for book in books:
+        if book.get("book_id") == book_id:
+            books.remove(book)
+            return
+    raise HTTPException(status_code=404, detail="Book not found")

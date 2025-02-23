@@ -1,5 +1,6 @@
 from fastapi import HTTPException, APIRouter, Depends
 from fastapi.responses import JSONResponse
+from fastapi.responses import Response
 
 import src.books_db
 from src import utils, schemas
@@ -47,10 +48,9 @@ def update_book(book_id: int, updated_book: schemas.Book):
     raise HTTPException(status_code=404, detail="Book not found")
 
 
-@router.delete("/{book_id}")
-def delete_book(book_id: int):
-    for i, book in enumerate(src.books_db.books):
-        if book.get("book_id") == book_id:
-            del src.books_db.books[i]
-            return {"message": "schemas.Book deleted"}
-    raise HTTPException(status_code=404, detail="Book not found")
+@router.delete("/{book_id}",
+               summary="Delete book",
+               responses={204: {"description": "Book deleted"}}
+               )
+def delete_book(_: dict = Depends(utils.delete_book)):
+    return Response(status_code=204)
