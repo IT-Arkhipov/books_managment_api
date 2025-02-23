@@ -27,24 +27,24 @@ def create_book(book: schemas.Book):
 @router.get("/{book_id}", response_model=schemas.Book)
 def get_book(book_id: int):
     for book in src.books_db.books:
-        if book.id == book_id:
+        if book.get("book_id") == book_id:
             return book
-    raise HTTPException(status_code=404, detail="schemas.Book not found")
+    raise HTTPException(status_code=404, detail="Book not found")
 
 
 @router.put("/{book_id}", response_model=schemas.Book)
 def update_book(book_id: int, updated_book: schemas.Book):
     for i, book in enumerate(src.books_db.books):
-        if book.id == book_id:
+        if book.get("book_id") == book_id:
             src.books_db.books[i] = updated_book
             return updated_book
-    raise HTTPException(status_code=404, detail="schemas.Book not found")
+    raise HTTPException(status_code=404, detail="Book not found")
 
 
 @router.delete("/{book_id}")
 def delete_book(book_id: int):
     for i, book in enumerate(src.books_db.books):
-        if book.id == book_id:
+        if book.get("book_id") == book_id:
             del src.books_db.books[i]
             return {"message": "schemas.Book deleted"}
-    raise HTTPException(status_code=404, detail="schemas.Book not found")
+    raise HTTPException(status_code=404, detail="Book not found")
