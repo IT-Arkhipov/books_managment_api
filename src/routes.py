@@ -1,4 +1,6 @@
 from fastapi import HTTPException, APIRouter, Depends
+from fastapi.responses import JSONResponse
+from fastapi.responses import Response
 
 import src.books_db
 from src import utils, schemas
@@ -18,18 +20,23 @@ def get_books(books: list = Depends(utils.get_books)):
     return books
 
 
-@router.post("", response_model=schemas.Book)
-def create_book(book: schemas.Book):
-    src.books_db.books.append(book)
+@router.post("", response_model=schemas.Book,
+             summary="Create book",
+             responses={201: {"description": "Book created successfully"}}
+             )
+def post_book(book: schemas.Book = Depends(utils.create_book)):
+    """
+    Create book
+    """
+    return JSONResponse(status_code=201, content=book)
+
+
+@router.get("/{book_id}", response_model=schemas.Book, summary="Get book")
+def get_book(book: dict = Depends(utils.get_book)):
+    """
+    Get book by id.\n
+    """
     return book
-
-
-@router.get("/{book_id}", response_model=schemas.Book)
-def get_book(book_id: int):
-    for book in src.books_db.books:
-        if book.get("book_id") == book_id:
-            return book
-    raise HTTPException(status_code=404, detail="Book not found")
 
 
 @router.put("/{book_id}", response_model=schemas.Book)
@@ -41,10 +48,9 @@ def update_book(book_id: int, updated_book: schemas.Book):
     raise HTTPException(status_code=404, detail="Book not found")
 
 
-@router.delete("/{book_id}")
-def delete_book(book_id: int):
-    for i, book in enumerate(src.books_db.books):
-        if book.get("book_id") == book_id:
-            del src.books_db.books[i]
-            return {"message": "schemas.Book deleted"}
-    raise HTTPException(status_code=404, detail="Book not found")
+@router.delete("/{book_id}",
+               summary="Delete book",
+               responses={204: {"description": "Book deleted"}}
+               )
+def delete_book(_: dict = Depends(utils.delete_book)):
+    return Response(status_code=204)
