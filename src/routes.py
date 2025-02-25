@@ -1,6 +1,9 @@
+from typing import Optional
+
 from fastapi import HTTPException, APIRouter, Depends
 from fastapi.responses import JSONResponse
 from fastapi.responses import Response
+from starlette import status
 
 import src.books_db
 from src import utils, schemas
@@ -8,8 +11,13 @@ from src import utils, schemas
 router = APIRouter(prefix="/books")
 
 
-@router.get("", response_model=schemas.Books, summary="Get books")
-def get_books(books: list = Depends(utils.get_books)):
+@router.get(
+    "",
+    response_model=schemas.Books,
+    summary="Get books",
+    status_code=status.HTTP_200_OK,
+)
+def get_books(books: schemas.Books = Depends(utils.get_books)) -> schemas.Books:
     """
     Get all books.\n
     Hidden parameters:\n
@@ -20,37 +28,59 @@ def get_books(books: list = Depends(utils.get_books)):
     return books
 
 
-@router.post("", response_model=schemas.Book,
-             summary="Create book",
-             responses={201: {"description": "Book created successfully"}}
-             )
-def post_book(book: schemas.Book = Depends(utils.create_book)):
+@router.post(
+    "",
+    response_model=schemas.Book,
+    summary="Create book",
+    responses={status.HTTP_201_CREATED: {"description": "Book created successfully"}},
+    status_code=status.HTTP_201_CREATED,
+)
+def post_book(book: dict = Depends(utils.create_book)):
     """
     Create book
     """
-    return JSONResponse(status_code=201, content=book)
+    return JSONResponse(status_code=status.HTTP_201_CREATED, content=book)
 
 
-@router.get("/{book_id}", response_model=schemas.Book, summary="Get book")
-def get_book(book: dict = Depends(utils.get_book)):
+@router.get(
+    "/{book_id}",
+    response_model=schemas.Book,
+    summary="Get book",
+    responses={
+        status.HTTP_404_NOT_FOUND: {"description": "Book not found"}
+    },
+    status_code=status.HTTP_200_OK,
+)
+def get_book(book: schemas.Book = Depends(utils.get_book)) -> schemas.Book:
     """
     Get book by id.\n
     """
     return book
 
 
-@router.put("/{book_id}", response_model=schemas.Book)
-def update_book(book_id: int, updated_book: schemas.Book):
-    for i, book in enumerate(src.books_db.books):
-        if book.get("book_id") == book_id:
-            src.books_db.books[i] = updated_book
-            return updated_book
-    raise HTTPException(status_code=404, detail="Book not found")
+@router.put(
+    "/{book_id}",
+    response_model=schemas.Book,
+    summary="Update book",
+    responses={
+        status.HTTP_200_OK: {"description": "Book updated successfully"},
+        status.HTTP_404_NOT_FOUND: {"description": "Book not found"},
+    },
+    status_code=status.HTTP_200_OK,
+)
+def update_book(book=Depends(utils.update_book)) -> Optional[schemas.Book]:
+    return book
 
 
-@router.delete("/{book_id}",
-               summary="Delete book",
-               responses={204: {"description": "Book deleted"}}
-               )
-def delete_book(_: dict = Depends(utils.delete_book)):
-    return Response(status_code=204)
+@router.delete(
+    "/{book_id}",
+    summary="Delete book",
+    dependencies=[Depends(utils.delete_book)],
+    responses={
+        status.HTTP_204_NO_CONTENT: {"description": "Book deleted successfully"},
+        status.HTTP_404_NOT_FOUND: {"description": "Book not found"},
+    },
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+def delete_book():
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
