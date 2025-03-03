@@ -5,10 +5,9 @@ from fastapi.responses import JSONResponse
 from fastapi.responses import Response
 from starlette import status
 
-import src.books_db
 from src import utils, schemas
 
-router = APIRouter(prefix="/books")
+router = APIRouter(prefix="/books", tags=["books"])
 
 
 @router.get(
@@ -51,9 +50,9 @@ def post_book(book: dict = Depends(utils.create_book)):
     },
     status_code=status.HTTP_200_OK,
 )
-def get_book(book: schemas.Book = Depends(utils.get_book)) -> schemas.Book:
+def get_book(book: schemas.Book = Depends(utils.get_book)) -> Optional[schemas.Book]:
     """
-    Get book by id.\n
+    Get a book by its id.\n
     """
     return book
 
