@@ -5,4 +5,9 @@ from src.data.users_db import users
 
 
 def get_users() -> List[schemas.User]:
-    return [schemas.User(**user) for user in users]
+    return [schemas.GetUser(**user) for user in users]
+
+
+def create_user(user: schemas.User):
+    users.append(user.model_dump())
+    return user
