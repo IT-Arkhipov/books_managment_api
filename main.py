@@ -1,11 +1,13 @@
 import uvicorn
 from fastapi import FastAPI, APIRouter
-from src.routes import router
+from src.api.books.routes import router as books_router
+from src.api.users.routes import router as users_router
 
 
 app = FastAPI()
 api_v1_router = APIRouter(prefix='/api/v1')
-api_v1_router.include_router(router)
+api_v1_router.include_router(users_router)
+api_v1_router.include_router(books_router)
 app.include_router(api_v1_router)
 
 if __name__ == '__main__':

@@ -1,7 +1,7 @@
 from fastapi import Query, HTTPException
 
-from src import schemas
-from src.books_db import books
+from src.api.books import schemas
+from src.data.books_db import books
 
 
 def get_books(
