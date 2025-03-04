@@ -1,7 +1,7 @@
 users = [
     {
         "email": "test@test.com",
-        "password": "testtest",
-        "username": "testuser"
+        "password": "test_test",
+        "role": "admin"
     }
 ]
