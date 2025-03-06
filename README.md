@@ -41,7 +41,7 @@ class Book:
 > pip install -r requirements.txt<br>
 > python main.py
 
-API-сервер: `127.0.0.1:8000`, Swagger: [http:\\127.0.0.1:8000\docs](http:\\127.0.0.1:8000\docs)
+API-сервер: `127.0.0.1:8000`, Swagger: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 
 ### 2. Запуск проекта через Docker
 > docker build . -t books_api<br>
