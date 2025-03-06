@@ -12,3 +12,9 @@ class Book(BaseModel):
 
 class Books(BaseModel):
     books: List[Book]
+
+
+class BookUpdate(BaseModel):
+    title: str
+    author: str
+    year: int

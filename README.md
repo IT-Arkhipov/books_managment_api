@@ -25,4 +25,24 @@ class Book:
 
 Список книг хранится в файле books_db.py в виде списка словарей.
 
-### Установка
+---
+## Установка и запуск
+
+### Склонировать проект
+
+`git clone https://github.com/IT-Arkhipov/books_managment_api.git`
+
+Перейти в папку, создать виртуальное окружение и установить зависимости (предварительно установлен python):
+> cd books_managment_api<br>
+
+### 1. Запуск проекта вручную
+> python -m venv venv<br>
+> .\venv\Scripts\activate<br>
+> pip install -r requirements.txt<br>
+> python main.py
+
+API-сервер: `127.0.0.1:8000`, Swagger: [http:\\127.0.0.1:8000\docs](http:\\127.0.0.1:8000\docs)
+
+### 2. Запуск проекта через Docker
+> docker build . -t books_api<br>
+> docke run --rm -p 8000:8000 books_api

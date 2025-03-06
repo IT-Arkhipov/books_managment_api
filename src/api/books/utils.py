@@ -1,7 +1,7 @@
 from fastapi import Query, HTTPException
 
-from src import schemas
-from src.books_db import books
+from src.api.books import schemas
+from src.data.books_db import books
 
 
 def get_books(
@@ -32,7 +32,7 @@ def get_book(book_id: str) -> schemas.Book:
     raise HTTPException(status_code=404, detail="Book not found")
 
 
-def create_book(new_book: schemas.Book):
+def create_book(new_book: schemas.Book) -> dict:
     for book in books:
         if book.get("book_id") == new_book.book_id:
             raise HTTPException(status_code=400, detail="Book already exists")
@@ -46,9 +46,19 @@ def create_book(new_book: schemas.Book):
     return appended_book
 
 
+def update_book(book_id: str, new_book: schemas.BookUpdate) -> schemas.Book:
+    for book in books:
+        if book.get("book_id") == book_id:
+            books.remove(book)
+            updated_book = new_book.model_dump()
+            updated_book["book_id"] = book_id
+            return schemas.Book(**create_book(schemas.Book(**updated_book)))
+    raise HTTPException(status_code=404, detail="Book not found")
+
+
 def delete_book(book_id: str):
     for book in books:
         if book.get("book_id") == book_id:
             books.remove(book)
-            return
+            return None
     raise HTTPException(status_code=404, detail="Book not found")
